@@ -121,26 +121,30 @@ const HistoryList: React.FC<HistoryListProps> = ({
               
               <div className="space-y-4">
                 {items.map((item) => (
-                  <div key={`${item.case.id}-${item.viewedAt}`} className="relative">
-                    <div className="absolute top-4 right-4 z-10">
-                      <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-3 py-1 text-xs text-gray-600 border border-gray-200">
-                        <div className="flex items-center space-x-1">
-                          <Eye className="w-3 h-3" />
-                          <span>{getTimeAgo(item.viewedAt)}</span>
+                  <div key={`${item.case.id}-${item.viewedAt}`} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {items.map((item) => (
+                      <div key={`${item.case.id}-${item.viewedAt}`} className="relative">
+                        <div className="absolute top-4 right-4 z-10">
+                          <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-3 py-1 text-xs text-gray-600 border border-gray-200">
+                            <div className="flex items-center space-x-1">
+                              <Eye className="w-3 h-3" />
+                              <span>{getTimeAgo(item.viewedAt)}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="transform hover:scale-[1.02] transition-transform duration-200">
+                          <CaseCard
+                            case={item.case}
+                            onView={onView}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                            onCopy={onCopy}
+                            canEdit={canEdit}
+                            canDelete={canDelete}
+                          />
                         </div>
                       </div>
-                    </div>
-                    <div className="transform hover:scale-[1.02] transition-transform duration-200">
-                      <CaseCard
-                        case={item.case}
-                        onView={onView}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                        onCopy={onCopy}
-                        canEdit={canEdit}
-                        canDelete={canDelete}
-                      />
-                    </div>
+                    ))}
                   </div>
                 ))}
               </div>

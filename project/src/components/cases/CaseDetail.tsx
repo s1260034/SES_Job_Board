@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   X, Calendar, MapPin, DollarSign, Users, Clock, 
-  Building, FileText, Edit, Trash2, Copy, Heart
+  Building, FileText, Edit, Trash2, Copy, Heart, Send
 } from 'lucide-react';
 import { Case, ReferenceMaterial } from '../../types';
 import ReferenceMaterials from './ReferenceMaterials';
@@ -13,9 +13,12 @@ interface CaseDetailProps {
   onDelete?: (caseId: string) => void;
   onCopy?: (caseId: string) => void;
   onToggleFavorite?: (caseId: string) => void;
+  onApply?: (caseId: string) => void;
   isFavorite?: boolean;
   canEdit: boolean;
   canDelete: boolean;
+  canApply: boolean;
+  userRole: string;
 }
 
 const CaseDetail: React.FC<CaseDetailProps> = ({
@@ -25,9 +28,12 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
   onDelete,
   onCopy,
   onToggleFavorite,
+  onApply,
   isFavorite = false,
   canEdit,
   canDelete,
+  canApply,
+  userRole,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -72,6 +78,15 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                   title={isFavorite ? 'お気に入りから削除' : 'お気に入りに追加'}
                 >
                   <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                </button>
+              )}
+              {canApply && onApply && caseItem.status === 'recruiting' && (
+                <button
+                  onClick={() => onApply(caseItem.id)}
+                  className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-xl transition-all duration-200 hover:scale-105"
+                  title="営業担当者に連絡"
+                >
+                  <Send className="w-5 h-5" />
                 </button>
               )}
               {canEdit && onCopy && (
@@ -131,7 +146,9 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                 <div>
                   <p className="text-sm text-gray-600">単価</p>
                   <p className="text-lg font-semibold text-gray-900">
-                    ¥{caseItem.rateMin.toLocaleString()} - ¥{caseItem.rateMax.toLocaleString()}
+                    {caseItem.rateMin > 0 && caseItem.rateMax > 0
+                      ? `¥${caseItem.rateMin.toLocaleString()} - ¥${caseItem.rateMax.toLocaleString()}`
+                      : '単価未定'}
                   </p>
                 </div>
               </div>
@@ -142,7 +159,7 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">勤務地</p>
-                  <p className="text-lg font-semibold text-gray-900">{caseItem.workLocation}</p>
+                  <p className="text-lg font-semibold text-gray-900">{caseItem.workLocation || '勤務地未定'}</p>
                 </div>
               </div>
 
@@ -152,7 +169,7 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">稼働開始予定日</p>
-                  <p className="text-lg font-semibold text-gray-900">{caseItem.expectedStartDate}</p>
+                  <p className="text-lg font-semibold text-gray-900">{caseItem.expectedStartDate || '開始日未定'}</p>
                 </div>
               </div>
             </div>

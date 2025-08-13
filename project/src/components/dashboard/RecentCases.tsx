@@ -51,16 +51,20 @@ const RecentCases: React.FC<RecentCasesProps> = ({ cases, onCaseClick }) => {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-1">
                   <DollarSign className="w-4 h-4" />
-                  <span>¥{caseItem.rateMin.toLocaleString()}~¥{caseItem.rateMax.toLocaleString()}</span>
+                  <span>
+                    {caseItem.rateMin > 0 && caseItem.rateMax > 0
+                      ? `¥${caseItem.rateMin.toLocaleString()}~¥${caseItem.rateMax.toLocaleString()}`
+                      : '単価未定'}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <MapPin className="w-4 h-4" />
-                  <span>{caseItem.workLocation}</span>
+                  <span>{caseItem.workLocation || '勤務地未定'}</span>
                 </div>
               </div>
               <div className="flex items-center space-x-1">
                 <Calendar className="w-4 h-4" />
-                <span>{caseItem.expectedStartDate}</span>
+                <span>{caseItem.expectedStartDate || '開始日未定'}</span>
               </div>
             </div>
           </div>

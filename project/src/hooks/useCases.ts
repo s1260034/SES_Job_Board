@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Case, CaseFilters } from '../types';
-import { mockCases } from '../data/mockData';
-
+import { mockCases, getRandomCaseImage } from '../data/mockData';
 export const useCases = () => {
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +19,7 @@ export const useCases = () => {
       id: `CASE-${String(cases.length + 1).padStart(3, '0')}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      imageUrl: caseData.imageUrl || getRandomCaseImage(),
     };
     setCases(prev => [newCase, ...prev]);
     return newCase;
@@ -31,6 +31,7 @@ export const useCases = () => {
       id: `CASE-${String(cases.length + index + 1).padStart(3, '0')}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      imageUrl: caseData.imageUrl || getRandomCaseImage(),
     }));
     setCases(prev => [...newCases, ...prev]);
     return newCases;
@@ -60,6 +61,7 @@ export const useCases = () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       assignedTo: undefined, // Clear assignment
+      imageUrl: getRandomCaseImage(), // 新しいランダム画像を設定
     };
 
     setCases(prev => [copiedCase, ...prev]);

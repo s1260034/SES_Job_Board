@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, MapPin, DollarSign, Users, Edit, Trash2, Eye, Copy, Heart } from 'lucide-react';
+import { Calendar, MapPin, DollarSign, Users, Edit, Trash2, Eye, Copy, Heart, Send } from 'lucide-react';
 import { Case } from '../../types';
 
 interface CaseCardProps {
@@ -9,9 +9,11 @@ interface CaseCardProps {
   onDelete?: (caseId: string) => void;
   onCopy?: (caseId: string) => void;
   onToggleFavorite?: (caseId: string) => void;
+  onApply?: (caseId: string) => void;
   isFavorite?: boolean;
   canEdit: boolean;
   canDelete: boolean;
+  canApply?: boolean;
 }
 
 const CaseCard: React.FC<CaseCardProps> = ({
@@ -21,9 +23,11 @@ const CaseCard: React.FC<CaseCardProps> = ({
   onDelete,
   onCopy,
   onToggleFavorite,
+  onApply,
   isFavorite = false,
   canEdit,
   canDelete,
+  canApply = false,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -71,15 +75,19 @@ const CaseCard: React.FC<CaseCardProps> = ({
       <div className="space-y-2 mb-4">
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <DollarSign className="w-4 h-4" />
-          <span>¥{caseItem.rateMin.toLocaleString()} - ¥{caseItem.rateMax.toLocaleString()}</span>
+          <span>
+            {caseItem.rateMin > 0 && caseItem.rateMax > 0
+              ? `¥${caseItem.rateMin.toLocaleString()} - ¥${caseItem.rateMax.toLocaleString()}`
+              : '単価未定'}
+          </span>
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <MapPin className="w-4 h-4" />
-          <span>{caseItem.workLocation}</span>
+          <span>{caseItem.workLocation || '勤務地未定'}</span>
         </div>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <Calendar className="w-4 h-4" />
-          <span>開始予定: {caseItem.expectedStartDate}</span>
+          <span>開始予定: {caseItem.expectedStartDate || '未定'}</span>
         </div>
       </div>
 
@@ -127,6 +135,15 @@ const CaseCard: React.FC<CaseCardProps> = ({
               title={isFavorite ? 'お気に入りから削除' : 'お気に入りに追加'}
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
+            </button>
+          )}
+          {canApply && onApply && caseItem.status === 'recruiting' && (
+            <button
+              onClick={() => onApply(caseItem.id)}
+              className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+              title="営業担当者に連絡"
+            >
+              <Send className="w-4 h-4" />
             </button>
           )}
           {canEdit && onCopy && (

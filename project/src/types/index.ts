@@ -6,6 +6,9 @@ export interface User {
   department: string;
   favorites: string[];
   viewHistory: ViewHistoryItem[];
+  applications: Application[];
+  skills: string[];
+  experience: number; // 経験年数
 }
 
 export interface ViewHistoryItem {
@@ -13,8 +16,22 @@ export interface ViewHistoryItem {
   viewedAt: string;
 }
 
+export interface Application {
+  id: string;
+  caseId: string;
+  userId: string;
+  appliedAt: string;
+  status: 'pending' | 'reviewing' | 'interview_scheduled' | 'interview_completed' | 'accepted' | 'rejected' | 'withdrawn';
+  message: string; // 応募メッセージ
+  resumeUrl?: string; // 履歴書URL
+  notes?: string; // 営業側のメモ
+  interviewDate?: string;
+  feedback?: string; // 面談フィードバック
+}
+
 export interface Case {
   id: string;
+  companyName: string;
   name: string;
   overview: string;
   requiredSkills: string[];
@@ -22,17 +39,28 @@ export interface Case {
   rateMin: number;
   rateMax: number;
   workLocation: string;
+  remoteFrequency: string;
+  developmentEnvironment: string[];
+  period: string;
+  settlementConditions: string;
+  paymentTerms: string;
+  recruitmentCount: number;
+  contractType: string;
+  businessFlow: string;
+  foreignNationalAllowed: boolean;
+  interviewMethod: string;
   expectedStartDate: string;
-  remoteWorkConditions: string;
   workHours: string;
-  contractPeriod: string;
   notes: string;
+  emailSubject: string;
+  receivedAt: string;
   status: 'recruiting' | 'proposing' | 'contracted' | 'ended';
   createdAt: string;
   updatedAt: string;
   createdBy: string;
   assignedTo?: string;
   referenceMaterials?: ReferenceMaterial[];
+  applications?: Application[];
   imageUrl?: string;
 }
 

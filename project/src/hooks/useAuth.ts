@@ -15,7 +15,8 @@ export const useAuth = () => {
       setUser({
         ...parsedUser,
         favorites: parsedUser.favorites || [],
-        viewHistory: parsedUser.viewHistory || []
+        viewHistory: parsedUser.viewHistory || [],
+        applications: parsedUser.applications || []
       });
     }
     setIsLoading(false);
@@ -42,7 +43,7 @@ export const useAuth = () => {
   };
 
   const canDelete = () => {
-    return user?.role === 'admin';
+    return user?.role === 'admin' || user?.role === 'sales';
   };
 
   const addToFavorites = (caseId: string) => {
@@ -96,6 +97,125 @@ export const useAuth = () => {
     }
   };
 
+  const addApplication = (caseId: string, applicationData: { message: string; resumeUrl?: string }) => {
+    if (user) {
+      const applications = user.applications || [];
+      
+      // Check if already applied
+      const existingApplication = applications.find(app => app.caseId === caseId);
+      if (existingApplication) {
+        return existingApplication;
+      }
+      
+      // Create new application
+      const newApplication = {
+        id: `APP-${Date.now()}`,
+        caseId,
+        userId: user.id,
+        appliedAt: new Date().toISOString(),
+        status: 'pending' as const,
+        message: applicationData.message,
+        resumeUrl: applicationData.resumeUrl,
+      };
+      
+      const updatedApplications = [...applications, newApplication];
+      const updatedUser = {
+        ...user,
+        applications: updatedApplications
+      };
+      
+      setUser(updatedUser);
+      localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      
+      return newApplication;
+    }
+    return null;
+  };
+
+  const updateApplicationStatus = (applicationId: string, status: Application['status'], notes?: string, interviewDate?: string, feedback?: string) => {
+    if (user && (user.role === 'admin' || user.role === 'sales')) {
+      // Find and update the application in mockUsers
+      const updatedMockUsers = mockUsers.map((u: User) => {
+        if (u.applications) {
+          const updatedApplications = u.applications.map((app: Application) => {
+            if (app.id === applicationId) {
+              return {
+                ...app,
+                status,
+                notes: notes || app.notes,
+                interviewDate: interviewDate || app.interviewDate,
+                feedback: feedback || app.feedback,
+              };
+            }
+            return app;
+          });
+          return { ...u, applications: updatedApplications };
+        }
+        return u;
+      });
+      
+      // Update current user if they have this application
+      if (user.applications) {
+        const updatedCurrentUserApplications = user.applications.map((app: Application) => {
+          if (app.id === applicationId) {
+            return {
+              ...app,
+              status,
+              notes: notes || app.notes,
+              interviewDate: interviewDate || app.interviewDate,
+              feedback: feedback || app.feedback,
+            };
+          }
+          return app;
+        });
+        
+        const updatedUser = {
+          ...user,
+          applications: updatedCurrentUserApplications
+        };
+        
+        setUser(updatedUser);
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      }
+      
+      // Also update the specific user who made the application
+      const applicationUser = updatedMockUsers.find(u => 
+        u.applications?.some(app => app.id === applicationId)
+      );
+      
+      if (applicationUser) {
+        const currentUserData = localStorage.getItem('currentUser');
+        if (currentUserData) {
+          const currentUser = JSON.parse(currentUserData);
+          if (currentUser.id === applicationUser.id) {
+            const updatedApplications = applicationUser.applications?.map((app: Application) => {
+              if (app.id === applicationId) {
+                return {
+                  ...app,
+                  status,
+                  notes: notes || app.notes,
+                  interviewDate: interviewDate || app.interviewDate,
+                  feedback: feedback || app.feedback,
+                };
+              }
+              return app;
+            });
+            
+            const updatedCurrentUser = {
+              ...currentUser,
+              applications: updatedApplications
+            };
+            
+            localStorage.setItem('currentUser', JSON.stringify(updatedCurrentUser));
+          }
+        }
+      }
+      
+      return true;
+    }
+    return false;
+  };
+
   return {
     user,
     isLoading,
@@ -106,5 +226,7 @@ export const useAuth = () => {
     addToFavorites,
     removeFromFavorites,
     addToHistory,
+    addApplication,
+    updateApplicationStatus,
   };
 };

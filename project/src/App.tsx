@@ -5,23 +5,27 @@ import { CaseFilters } from './types';
 import LoginForm from './components/auth/LoginForm';
 import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
-import DashboardStats from './components/dashboard/DashboardStats';
-import RecentCases from './components/dashboard/RecentCases';
+import EngineerDashboard from './components/dashboard/EngineerDashboard';
+import SalesAdminDashboard from './components/dashboard/SalesAdminDashboard';
 import CaseList from './components/cases/CaseList';
 import SearchFilters from './components/cases/SearchFilters';
 import CaseForm from './components/cases/CaseForm';
 import CaseDetail from './components/cases/CaseDetail';
 import FavoritesList from './components/favorites/FavoritesList';
 import HistoryList from './components/history/HistoryList';
+import ApplicationModal from './components/cases/ApplicationModal';
+import { mockApplications, mockUsers } from './data/mockData';
 
 function App() {
-  const { user, isLoading, login, logout, canEdit, canDelete, addToFavorites, removeFromFavorites, addToHistory } = useAuth();
+  const { user, isLoading, login, logout, canEdit, canDelete, addToFavorites, removeFromFavorites, addToHistory, addApplication, updateApplicationStatus } = useAuth();
   const { cases, loading, createCase, createMultipleCases, updateCase, deleteCase, copyCase, filterCases, getCaseById } = useCases();
   
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [editingCaseId, setEditingCaseId] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState(cases);
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [applicationCaseId, setApplicationCaseId] = useState<string | null>(null);
 
   useEffect(() => {
     setSearchResults(cases);
@@ -105,6 +109,35 @@ function App() {
     }
   };
 
+  const handleApply = (caseId: string) => {
+    setApplicationCaseId(caseId);
+    setShowApplicationModal(true);
+  };
+
+  const handleApplicationSubmit = (applicationData: { message: string; resumeUrl?: string }) => {
+    if (applicationCaseId && user) {
+      // 営業担当者への連絡として応募を追加
+      const newApplication = addApplication(applicationCaseId, applicationData);
+      
+      if (newApplication) {
+        // Update mockApplications to include the new application
+        mockApplications.push(newApplication);
+        
+        console.log('Sales contact submitted:', {
+          applicationId: newApplication.id,
+          caseId: applicationCaseId,
+          userId: user.id,
+          type: 'interest_inquiry',
+          status: 'pending',
+          ...applicationData
+        });
+      }
+      
+      setShowApplicationModal(false);
+      setApplicationCaseId(null);
+    }
+  };
+
   const getFavoriteCases = () => {
     if (!user) return [];
     return user.favorites.map(id => getCaseById(id)).filter(Boolean) as Case[];
@@ -130,6 +163,7 @@ function App() {
         <CaseForm
           case={caseToEdit}
           onSubmit={handleCaseSubmit}
+          onImport={canEdit() ? createMultipleCases : undefined}
           onCancel={() => setActiveView('cases')}
           iscopying={activeView === 'copy'}
         />
@@ -138,12 +172,26 @@ function App() {
 
     switch (activeView) {
       case 'dashboard':
-        return (
-          <div className="space-y-8">
-            <DashboardStats cases={cases} />
-            <RecentCases cases={cases} onCaseClick={handleCaseView} />
-          </div>
-        );
+        if (user?.role === 'engineer') {
+          return (
+            <EngineerDashboard
+              user={user}
+              cases={cases}
+              onCaseClick={handleCaseView}
+            />
+          );
+        } else {
+          return (
+            <SalesAdminDashboard
+              user={user}
+              cases={cases}
+              allApplications={mockApplications}
+              allUsers={mockUsers}
+              onCaseClick={handleCaseView}
+              onUpdateApplicationStatus={updateApplicationStatus}
+            />
+          );
+        }
       
       case 'cases':
         return (
@@ -154,11 +202,14 @@ function App() {
             onDelete={canDelete() ? handleCaseDelete : undefined}
             onCopy={canEdit() ? handleCaseCopy : undefined}
             onToggleFavorite={handleToggleFavorite}
+            onApply={user?.role === 'engineer' ? handleApply : undefined}
             userFavorites={user?.favorites || []}
             onCreate={canEdit() ? handleCaseCreate : undefined}
             onImport={canEdit() ? createMultipleCases : undefined}
             canEdit={canEdit()}
             canDelete={canDelete()}
+            canApply={user?.role === 'engineer'}
+            userRole={user?.role || ''}
           />
         );
       
@@ -181,7 +232,7 @@ function App() {
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <span>¥{caseItem.rateMin.toLocaleString()}~</span>
+                      <span>¥{(caseItem.rateMin || 0).toLocaleString()}~</span>
                       <span>{caseItem.workLocation}</span>
                     </div>
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -262,10 +313,25 @@ function App() {
           onEdit={canEdit() ? handleCaseEdit : undefined}
           onDelete={canDelete() ? handleCaseDelete : undefined}
           onCopy={canEdit() ? handleCaseCopy : undefined}
+          onApply={user?.role === 'engineer' ? handleApply : undefined}
           onToggleFavorite={handleToggleFavorite}
           isFavorite={user?.favorites.includes(selectedCase.id) || false}
           canEdit={canEdit()}
           canDelete={canDelete()}
+          canApply={user?.role === 'engineer'}
+          userRole={user?.role || ''}
+        />
+      )}
+
+      {showApplicationModal && applicationCaseId && (
+        <ApplicationModal
+          case={getCaseById(applicationCaseId)!}
+          onClose={() => {
+            setShowApplicationModal(false);
+            setApplicationCaseId(null);
+          }}
+          onSubmit={handleApplicationSubmit}
+          existingApplication={user?.applications.find(app => app.caseId === applicationCaseId)}
         />
       )}
     </div>
