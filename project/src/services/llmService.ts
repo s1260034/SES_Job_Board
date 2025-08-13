@@ -28,20 +28,28 @@ export interface LLMAnalysisResult {
   confidence?: number;
 }
 
+// サーバー未実装のため、当面はLLM連携を無効化
+export const isLLMEnabled = false;
+
 class LLMService {
   private apiEndpoint: string;
   private model: string;
 
   constructor() {
     // 本番環境では環境変数から取得
-    this.apiEndpoint = import.meta.env.VITE_LLM_API_ENDPOINT || 'http://localhost:8080/v1/chat/completions';
-    this.model = import.meta.env.VITE_LLM_MODEL || 'Phi-3-mini-4k-instruct-q4';
+    this.apiEndpoint = 'http://localhost:8080/v1/chat/completions';
+    this.model = 'Phi-3-mini-4k-instruct-q4';
   }
 
   /**
    * メール内容をLLMで解析して案件情報を抽出
    */
   async analyzeEmail(emailContent: string): Promise<LLMAnalysisResult> {
+    // LLMを無効化している間は即座にフォールバック解析を返す
+    if (!isLLMEnabled) {
+      return this.fallbackAnalysis(emailContent);
+    }
+
     try {
       const prompt = this.createAnalysisPrompt(emailContent);
       

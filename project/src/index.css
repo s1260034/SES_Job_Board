@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	html {
+		/* 全体の文字サイズを1段階大きく（16px → 17px） */
+		font-size: 20px;
+	}
+}

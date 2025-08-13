@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Mail, Wand2, AlertCircle, CheckCircle, Upload, Brain, Zap, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Plus, Mail, AlertCircle, CheckCircle, Upload, Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import { Case, ReferenceMaterial } from '../../types';
 import { skillOptions, locationOptions } from '../../data/mockData';
 import ReferenceMaterials from './ReferenceMaterials';
@@ -14,8 +14,13 @@ interface CaseFormProps {
   iscopying?: boolean;
 }
 
-const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImport, onCancel, iscopying }) => {
-  const [formData, setFormData] = useState({
+type CaseFormData = Omit<Case, 'id' | 'createdAt' | 'updatedAt'> & {
+  referenceMaterials: ReferenceMaterial[];
+  imageUrl: string;
+};
+
+const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImport, onCancel, iscopying: _iscopying }) => {
+  const [formData, setFormData] = useState<CaseFormData>({
     companyName: '',
     name: '',
     overview: '',
@@ -39,9 +44,10 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
     notes: '',
     emailSubject: '',
     receivedAt: new Date().toISOString(),
-    status: 'recruiting' as const,
+    status: 'recruiting',
     createdBy: '1',
     referenceMaterials: [] as ReferenceMaterial[],
+    imageUrl: ''
   });
 
   const [requiredSkillInput, setRequiredSkillInput] = useState('');
@@ -83,6 +89,7 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
         status: existingCase.status,
         createdBy: existingCase.createdBy,
         referenceMaterials: existingCase.referenceMaterials || [],
+        imageUrl: existingCase.imageUrl || ''
       });
     }
   }, [existingCase]);
@@ -206,13 +213,13 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
       }
     }
 
-    // リモートワーク条件の抽出
+    // リモート頻度の抽出
     const remoteKeywords = ['リモート', 'テレワーク', '在宅', 'フルリモート', '出社'];
     for (const keyword of remoteKeywords) {
       const regex = new RegExp(`([^\\n]*${keyword}[^\\n]*)`, 'i');
       const match = content.match(regex);
       if (match) {
-        extractedData.remoteWorkConditions = match[1].trim();
+        extractedData.remoteFrequency = match[1].trim();
         break;
       }
     }
@@ -224,7 +231,7 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
       extractedData.workHours = `${timeMatch[1]}:${timeMatch[2]}-${timeMatch[3]}:${timeMatch[4]}`;
     }
 
-    // 契約期間の抽出
+    // 期間の抽出
     const periodPatterns = [
       /期間[：:]?\s*(\d+)[ヶか]?月/,
       /(\d+)[ヶか]?月間/,
@@ -235,9 +242,9 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
       const match = content.match(pattern);
       if (match) {
         if (match[1].match(/^\d+$/)) {
-          extractedData.contractPeriod = `${match[1]}ヶ月`;
+          extractedData.period = `${match[1]}ヶ月`;
         } else {
-          extractedData.contractPeriod = match[1].trim();
+          extractedData.period = match[1].trim();
         }
         break;
       }
@@ -246,64 +253,7 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
     return extractedData;
   };
 
-  const handleLLMAnalysis = async () => {
-    if (!emailContent.trim()) {
-      setParseResult('メール内容を入力してください');
-      return;
-    }
-
-    setParsing(true);
-    setParseResult('');
-
-    try {
-      // LLMサービスを使用して解析
-      const { llmService } = await import('../../services/llmService');
-      const llmResult = await llmService.analyzeEmail(emailContent);
-      
-      let extractedData;
-      let resultMessage = '';
-      
-      if (llmResult.success && llmResult.extractedData) {
-        extractedData = llmResult.extractedData;
-        resultMessage = `✅ LLM解析完了！信頼度: ${Math.round((llmResult.confidence || 0) * 100)}%`;
-      } else {
-        // LLM解析失敗時は正規表現にフォールバック
-        extractedData = parseEmailContent(emailContent);
-        resultMessage = '⚠️ LLM解析失敗、正規表現解析で処理しました';
-      }
-      
-      // フォームデータを更新
-      setFormData(prev => ({
-        ...prev,
-        companyName: extractedData.companyName || prev.companyName,
-        name: extractedData.name || prev.name,
-        overview: extractedData.overview || prev.overview,
-        requiredSkills: extractedData.requiredSkills || prev.requiredSkills,
-        preferredSkills: extractedData.preferredSkills || prev.preferredSkills,
-        rateMin: extractedData.rateMin || prev.rateMin,
-        rateMax: extractedData.rateMax || prev.rateMax,
-        workLocation: extractedData.workLocation || prev.workLocation,
-        expectedStartDate: extractedData.expectedStartDate || prev.expectedStartDate,
-        remoteFrequency: extractedData.remoteFrequency || prev.remoteFrequency,
-        workHours: extractedData.workHours || prev.workHours,
-        period: extractedData.period || prev.period,
-        settlementConditions: extractedData.settlementConditions || prev.settlementConditions,
-        paymentTerms: extractedData.paymentTerms || prev.paymentTerms,
-        recruitmentCount: extractedData.recruitmentCount || prev.recruitmentCount,
-        contractType: extractedData.contractType || prev.contractType,
-        businessFlow: extractedData.businessFlow || prev.businessFlow,
-        foreignNationalAllowed: extractedData.foreignNationalAllowed !== undefined ? extractedData.foreignNationalAllowed : prev.foreignNationalAllowed,
-        interviewMethod: extractedData.interviewMethod || prev.interviewMethod,
-        notes: extractedData.notes || prev.notes,
-      }));
-
-      setParseResult(resultMessage);
-    } catch (err) {
-      setParseResult('❌ LLM解析に失敗しました');
-    } finally {
-      setParsing(false);
-    }
-  };
+  // LLM解析は未実装のため関数は削除
 
   const handleEmailParse = async () => {
     if (!emailContent.trim()) {
@@ -328,9 +278,9 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
         rateMax: extractedData.rateMax || prev.rateMax,
         workLocation: extractedData.workLocation || prev.workLocation,
         expectedStartDate: extractedData.expectedStartDate || prev.expectedStartDate,
-        remoteWorkConditions: extractedData.remoteWorkConditions || prev.remoteWorkConditions,
+        remoteFrequency: extractedData.remoteFrequency || prev.remoteFrequency,
         workHours: extractedData.workHours || prev.workHours,
-        contractPeriod: extractedData.contractPeriod || prev.contractPeriod,
+        period: extractedData.period || prev.period,
       }));
 
       setParseResult('✅ メール解析が完了しました！左側のフォームに情報が自動入力されました。');
@@ -412,14 +362,14 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
     };
     setFormData(prev => ({
       ...prev,
-      referenceMaterials: [...prev.referenceMaterials, newMaterial],
+      referenceMaterials: [...(prev.referenceMaterials || []), newMaterial],
     }));
   };
 
   const handleRemoveMaterial = (materialId: string) => {
     setFormData(prev => ({
       ...prev,
-      referenceMaterials: prev.referenceMaterials.filter(m => m.id !== materialId),
+      referenceMaterials: (prev.referenceMaterials || []).filter(m => m.id !== materialId),
     }));
   };
 
@@ -1041,18 +991,7 @@ React/TypeScriptを使用した開発経験が必要です。
               
               {/* Analysis Method Buttons */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button
-                  onClick={handleLLMAnalysis}
-                  disabled={parsing || !emailContent.trim()}
-                  className="flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
-                >
-                  <Brain className="w-5 h-5" />
-                  <div className="text-left">
-                    <div className="font-semibold">LLM解析</div>
-                    <div className="text-xs opacity-90">高精度・時間かかる</div>
-                  </div>
-                </button>
-                
+                {/* ルールベース解析 */}
                 <button
                   onClick={handleEmailParse}
                   disabled={parsing || !emailContent.trim()}
@@ -1062,6 +1001,18 @@ React/TypeScriptを使用した開発経験が必要です。
                   <div className="text-left">
                     <div className="font-semibold">ルールベース解析</div>
                     <div className="text-xs opacity-90">高速・標準精度</div>
+                  </div>
+                </button>
+
+                {/* LLMベース解析（実装予定のダミー） */}
+                <button
+                  onClick={() => alert('LLMベース解析は実装予定です。サーバー準備後に有効化します。')}
+                  className="flex items-center justify-center space-x-3 px-6 py-4 border border-dashed border-purple-400 text-purple-700 rounded-2xl hover:bg-purple-50 transition-all duration-200"
+                >
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold">β</span>
+                  <div className="text-left">
+                    <div className="font-semibold">LLMベース解析（実装予定）</div>
+                    <div className="text-xs opacity-90">サーバー準備後に有効化</div>
                   </div>
                 </button>
               </div>

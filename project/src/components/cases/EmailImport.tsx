@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { X, Mail, Wand2, AlertCircle, CheckCircle, Zap, Brain, Clock, Loader } from 'lucide-react';
+import { X, Mail, AlertCircle, CheckCircle, Zap, Clock, Loader } from 'lucide-react';
 import { Case } from '../../types';
-import { llmService } from '../../services/llmService';
 
 interface EmailImportProps {
   onImport: (caseData: Omit<Case, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -12,7 +11,7 @@ const EmailImport: React.FC<EmailImportProps> = ({ onImport, onClose }) => {
   const [emailContent, setEmailContent] = useState('');
   const [parsing, setParsing] = useState(false);
   const [parseResult, setParseResult] = useState<string>('');
-  const [analysisMethod, setAnalysisMethod] = useState<'llm' | 'regex' | null>(null);
+  // LLMは当面未使用
   const [confidence, setConfidence] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
   const [progressMessage, setProgressMessage] = useState<string>('');
@@ -133,6 +132,7 @@ const EmailImport: React.FC<EmailImportProps> = ({ onImport, onClose }) => {
 
     // デフォルト値を設定
     return {
+      companyName: '',
       name: extractedData.name || '',
       overview: extractedData.overview || '',
       requiredSkills: requiredSkills.slice(0, 5),
@@ -140,81 +140,29 @@ const EmailImport: React.FC<EmailImportProps> = ({ onImport, onClose }) => {
       rateMin: extractedData.rateMin || 0,
       rateMax: extractedData.rateMax || 0,
       workLocation: extractedData.workLocation || '',
+      remoteFrequency: '',
+      developmentEnvironment: [],
+      period: '',
+      settlementConditions: '',
+      paymentTerms: '',
+      recruitmentCount: 1,
+      contractType: '準委任契約',
+      businessFlow: '',
+      foreignNationalAllowed: false,
+      interviewMethod: '',
       expectedStartDate: extractedData.expectedStartDate || '',
-      remoteWorkConditions: '',
       workHours: '',
-      contractPeriod: '',
       notes: `メールから自動抽出された案件情報\n\n元のメール内容:\n${content}`,
-      status: 'recruiting' as const,
+      emailSubject: '',
+      receivedAt: new Date().toISOString(),
+      status: 'recruiting',
       createdBy: '1',
       referenceMaterials: [],
       imageUrl: '',
     };
   };
 
-  const handleLLMAnalysis = async () => {
-    if (!emailContent.trim()) {
-      setParseResult('メール内容を入力してください');
-      return;
-    }
-
-    setParsing(true);
-    setParseResult('');
-    setConfidence(0);
-    setProgress(0);
-    setProgressMessage('LLM解析を開始しています...');
-
-    try {
-      // プログレス表示のシミュレーション
-      setProgress(20);
-      setProgressMessage('LLMモデルを初期化中...');
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setProgress(40);
-      setProgressMessage('メール内容を解析中...');
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      setProgress(70);
-      setProgressMessage('案件情報を抽出中...');
-      const llmResult = await llmService.analyzeEmail(emailContent);
-      
-      setProgress(90);
-      setProgressMessage('結果を整理中...');
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      let extractedData;
-      let resultMessage = '';
-      
-      if (llmResult.success && llmResult.extractedData) {
-        extractedData = {
-          ...llmResult.extractedData,
-          status: 'recruiting' as const,
-          createdBy: '1',
-          referenceMaterials: [],
-          imageUrl: '',
-        };
-        setConfidence(llmResult.confidence || 0);
-        resultMessage = `✅ LLM解析完了！信頼度: ${Math.round((llmResult.confidence || 0) * 100)}%`;
-      } else {
-        // LLM解析失敗時は正規表現にフォールバック
-        extractedData = parseEmailContent(emailContent);
-        setConfidence(0.6);
-        resultMessage = '⚠️ LLM解析失敗、正規表現解析で処理しました';
-      }
-      
-      setProgress(100);
-      setProgressMessage('完了！');
-      setParseResult(resultMessage);
-      onImport(extractedData);
-    } catch (err) {
-      setParseResult('❌ メール内容の解析に失敗しました');
-      setConfidence(0);
-      setProgress(0);
-      setProgressMessage('');
-    } finally {
-      setParsing(false);
-    }
-  };
+  // （将来のLLM実装用の枠はUIのダミーボタンのみ）
 
   const handleRuleBasedAnalysis = async () => {
     if (!emailContent.trim()) {
@@ -244,9 +192,20 @@ const EmailImport: React.FC<EmailImportProps> = ({ onImport, onClose }) => {
       setConfidence(0.6);
       setParseResult('✅ ルールベース解析が完了しました！');
       
-      const finalData = {
+      const finalData: Omit<Case, 'id' | 'createdAt' | 'updatedAt'> = {
         ...extractedData,
-        status: 'recruiting' as const,
+        companyName: extractedData.companyName || '',
+        developmentEnvironment: extractedData.developmentEnvironment || [],
+        settlementConditions: extractedData.settlementConditions || '',
+        paymentTerms: extractedData.paymentTerms || '',
+        recruitmentCount: extractedData.recruitmentCount || 1,
+        contractType: extractedData.contractType || '準委任契約',
+        businessFlow: extractedData.businessFlow || '',
+        foreignNationalAllowed: extractedData.foreignNationalAllowed || false,
+        interviewMethod: extractedData.interviewMethod || '',
+        emailSubject: '',
+        receivedAt: new Date().toISOString(),
+        status: 'recruiting',
         createdBy: '1',
         referenceMaterials: [],
         imageUrl: '',
@@ -278,9 +237,7 @@ const EmailImport: React.FC<EmailImportProps> = ({ onImport, onClose }) => {
                 <h2 className="text-2xl font-bold text-gray-900">
                   メール自動解析
                 </h2>
-                <p className="text-gray-600">
-                  LLMまたはルールベースで案件情報を抽出
-                </p>
+                <p className="text-gray-600">ルールベースで案件情報を抽出</p>
               </div>
             </div>
             <button
@@ -345,19 +302,18 @@ const EmailImport: React.FC<EmailImportProps> = ({ onImport, onClose }) => {
             )}
 
             {/* Analysis Method Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* LLMベース解析（実装予定のダミー） */}
               <button
-                onClick={handleLLMAnalysis}
-                disabled={parsing || !emailContent.trim()}
-                className="flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+                onClick={() => alert('LLMベース解析は実装予定です。サーバー準備後に有効化します。')}
+                className="flex items-center justify-center space-x-3 px-6 py-4 border border-dashed border-purple-400 text-purple-700 rounded-2xl hover:bg-purple-50 transition-all duration-200"
               >
-                <Brain className="w-5 h-5" />
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold">β</span>
                 <div className="text-left">
-                  <div className="font-semibold">LLM解析</div>
-                  <div className="text-xs opacity-90">高精度・時間かかる</div>
+                  <div className="font-semibold">LLMベース解析（実装予定）</div>
+                  <div className="text-xs opacity-90">サーバー準備後に有効化</div>
                 </div>
               </button>
-              
               <button
                 onClick={handleRuleBasedAnalysis}
                 disabled={parsing || !emailContent.trim()}
