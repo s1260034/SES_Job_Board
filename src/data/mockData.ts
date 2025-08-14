@@ -1,6 +1,5 @@
 import { Case, User, Application } from '../types';
 
-// Make mockApplications mutable for real-time updates
 export let mockApplications: Application[] = [
   {
     id: 'APP-001',
@@ -20,7 +19,7 @@ export let mockApplications: Application[] = [
     message: 'Node.jsでのAPI開発経験があります。IoTプロジェクトに参加したいです。',
     feedback: '技術力が高く、コミュニケーション能力も優秀。即戦力として期待できる。',
   },
-]
+];
 
 export const mockUsers: User[] = [
   {

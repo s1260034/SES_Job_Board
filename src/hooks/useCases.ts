@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Case, CaseFilters } from '../types';
 import { mockCases, getRandomCaseImage } from '../data/mockData';
+
 export const useCases = () => {
   const [cases, setCases] = useState<Case[]>([]);
   const [loading, setLoading] = useState(true);
