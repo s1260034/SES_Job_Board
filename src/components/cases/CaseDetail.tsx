@@ -194,19 +194,19 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">契約期間</p>
-                    <p className="text-lg font-semibold text-gray-900">{caseItem.contractPeriod}</p>
+                    <p className="text-lg font-semibold text-gray-900">{caseItem.period}</p>
                   </div>
                 </div>
               )}
 
-              {caseItem.remoteWorkConditions && (
+              {caseItem.remoteFrequency && (
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
                     <Users className="w-5 h-5 text-teal-600" />
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">リモートワーク</p>
-                    <p className="text-lg font-semibold text-gray-900">{caseItem.remoteWorkConditions}</p>
+                    <p className="text-lg font-semibold text-gray-900">{caseItem.remoteFrequency}</p>
                   </div>
                 </div>
               )}

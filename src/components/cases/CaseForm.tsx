@@ -235,9 +235,9 @@ const CaseForm: React.FC<CaseFormProps> = ({ case: existingCase, onSubmit, onImp
       const match = content.match(pattern);
       if (match) {
         if (match[1].match(/^\d+$/)) {
-          extractedData.contractPeriod = `${match[1]}ヶ月`;
+          extractedData.period = `${match[1]}ヶ月`;
         } else {
-          extractedData.contractPeriod = match[1].trim();
+          extractedData.period = match[1].trim();
         }
         break;
       }
