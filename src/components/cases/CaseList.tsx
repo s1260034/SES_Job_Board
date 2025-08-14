@@ -194,6 +194,7 @@ const CaseList: React.FC<CaseListProps> = ({
                       <Eye className="w-4 h-4" />
                     </button>
                     {onToggleFavorite && (
+                      userRole === 'engineer' && (
                       <button
                         onClick={() => onToggleFavorite(caseItem.id)}
                         className={`p-2 rounded-lg transition-colors w-8 h-8 flex items-center justify-center ${
@@ -205,6 +206,7 @@ const CaseList: React.FC<CaseListProps> = ({
                       >
                         <Heart className={`w-4 h-4 ${userFavorites.includes(caseItem.id) ? 'fill-current' : ''}`} />
                       </button>
+                      )
                     )}
                     {canApply && onApply && caseItem.status === 'recruiting' && (
                       <button
@@ -344,6 +346,7 @@ const CaseList: React.FC<CaseListProps> = ({
               canEdit={canEdit}
               canDelete={canDelete}
               canApply={canApply}
+              userRole={userRole}
             />
           ))}
         </div>

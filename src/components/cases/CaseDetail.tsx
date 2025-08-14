@@ -67,7 +67,7 @@ const CaseDetail: React.FC<CaseDetailProps> = ({
               </span>
             </div>
             <div className="flex items-center space-x-2">
-              {onToggleFavorite && (
+              {onToggleFavorite && userRole === 'engineer' && (
                 <button
                   onClick={() => onToggleFavorite(caseItem.id)}
                   className={`p-2 rounded-xl transition-all duration-200 hover:scale-105 ${

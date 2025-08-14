@@ -14,6 +14,7 @@ import CaseDetail from './components/cases/CaseDetail';
 import FavoritesList from './components/favorites/FavoritesList';
 import HistoryList from './components/history/HistoryList';
 import ApplicationModal from './components/cases/ApplicationModal';
+import EngineerCaseList from './components/cases/EngineerCaseList';
 import { mockApplications, mockUsers } from './data/mockData';
 
 function App() {
@@ -253,6 +254,10 @@ function App() {
         );
       
       case 'favorites':
+        // お気に入りはエンジニアのみ表示
+        if (user?.role !== 'engineer') {
+          return null;
+        }
         return (
           <FavoritesList
             favoriteCases={getFavoriteCases()}
@@ -262,6 +267,22 @@ function App() {
             onCopy={canEdit() ? handleCaseCopy : undefined}
             canEdit={canEdit()}
             canDelete={canDelete()}
+          />
+        );
+      
+      case 'engineer-cases':
+        // エンジニア専用の案件一覧
+        if (user?.role !== 'engineer') {
+          return null;
+        }
+        return (
+          <EngineerCaseList
+            cases={cases}
+            onView={handleCaseView}
+            onToggleFavorite={handleToggleFavorite}
+            onApply={handleApply}
+            userFavorites={user?.favorites || []}
+            userApplications={user?.applications || []}
           />
         );
       
@@ -292,6 +313,7 @@ function App() {
           activeView={activeView}
           onViewChange={setActiveView}
           canEdit={canEdit()}
+          userRole={user?.role || ''}
         />
         
         <main className="flex-1 p-8 ml-64 min-h-screen overflow-y-auto">

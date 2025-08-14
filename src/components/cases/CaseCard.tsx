@@ -14,6 +14,7 @@ interface CaseCardProps {
   canEdit: boolean;
   canDelete: boolean;
   canApply?: boolean;
+  userRole?: string;
 }
 
 const CaseCard: React.FC<CaseCardProps> = ({
@@ -28,6 +29,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
   canEdit,
   canDelete,
   canApply = false,
+  userRole,
 }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -124,7 +126,7 @@ const CaseCard: React.FC<CaseCardProps> = ({
           >
             <Eye className="w-4 h-4" />
           </button>
-          {onToggleFavorite && (
+          {onToggleFavorite && userRole === 'engineer' && (
             <button
               onClick={() => onToggleFavorite(caseItem.id)}
               className={`p-2 rounded-lg transition-colors ${

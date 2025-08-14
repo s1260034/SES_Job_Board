@@ -1,21 +1,39 @@
 import React from 'react';
-import { LayoutDashboard, Briefcase, Plus, Search, Heart, Clock } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Plus, Search, Heart, Clock, Building } from 'lucide-react';
 
 interface NavigationProps {
   activeView: string;
   onViewChange: (view: string) => void;
   canEdit: boolean;
+  userRole: string;
 }
 
-const Navigation: React.FC<NavigationProps> = ({ activeView, onViewChange, canEdit }) => {
-  const navItems = [
-    { id: 'dashboard', label: 'ダッシュボード', icon: LayoutDashboard },
-    { id: 'cases', label: '案件一覧', icon: Briefcase },
-    { id: 'search', label: '案件検索', icon: Search },
-    { id: 'favorites', label: 'お気に入り', icon: Heart },
-    { id: 'history', label: '閲覧履歴', icon: Clock },
-    ...(canEdit ? [{ id: 'create', label: '案件登録', icon: Plus }] : []),
-  ];
+const Navigation: React.FC<NavigationProps> = ({ activeView, onViewChange, canEdit, userRole }) => {
+  const getNavItems = () => {
+    const baseItems = [
+      { id: 'dashboard', label: 'ダッシュボード', icon: LayoutDashboard },
+      { id: 'cases', label: '案件一覧', icon: Briefcase },
+      { id: 'search', label: '案件検索', icon: Search },
+    ];
+
+    // エンジニアの場合は専用の案件一覧とお気に入りを表示
+    if (userRole === 'engineer') {
+      baseItems.push(
+        { id: 'engineer-cases', label: '案件一覧（エンジニア向け）', icon: Building },
+        { id: 'favorites', label: 'お気に入り', icon: Heart }
+      );
+    }
+
+    baseItems.push({ id: 'history', label: '閲覧履歴', icon: Clock });
+
+    if (canEdit) {
+      baseItems.push({ id: 'create', label: '案件登録', icon: Plus });
+    }
+
+    return baseItems;
+  };
+
+  const navItems = getNavItems();
 
   return (
     <nav className="bg-gray-50 border-r border-gray-200 w-64 h-screen overflow-y-auto fixed left-0 top-16 z-40">
