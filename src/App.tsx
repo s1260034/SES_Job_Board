@@ -14,7 +14,7 @@ import CaseDetail from './components/cases/CaseDetail';
 import FavoritesList from './components/favorites/FavoritesList';
 import HistoryList from './components/history/HistoryList';
 import ApplicationModal from './components/cases/ApplicationModal';
-import EngineerCaseList from './components/cases/EngineerCaseList';
+import EngineerParticipationList from './components/cases/EngineerParticipationList';
 import { mockApplications, mockUsers } from './data/mockData';
 
 function App() {
@@ -254,7 +254,6 @@ function App() {
         );
       
       case 'favorites':
-        // お気に入りはエンジニアのみ表示
         if (user?.role !== 'engineer') {
           return null;
         }
@@ -270,19 +269,17 @@ function App() {
           />
         );
       
-      case 'engineer-cases':
-        // エンジニア専用の案件一覧
-        if (user?.role !== 'engineer') {
+      case 'engineer-participation':
+        if (user?.role !== 'sales' && user?.role !== 'admin') {
           return null;
         }
         return (
-          <EngineerCaseList
+          <EngineerParticipationList
             cases={cases}
+            allApplications={mockApplications}
+            allUsers={mockUsers}
             onView={handleCaseView}
-            onToggleFavorite={handleToggleFavorite}
-            onApply={handleApply}
-            userFavorites={user?.favorites || []}
-            userApplications={user?.applications || []}
+            onUpdateApplicationStatus={updateApplicationStatus}
           />
         );
       

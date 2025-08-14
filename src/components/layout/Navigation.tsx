@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Briefcase, Plus, Search, Heart, Clock, Building } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Plus, Search, Heart, Clock, Users } from 'lucide-react';
 
 interface NavigationProps {
   activeView: string;
@@ -16,12 +16,14 @@ const Navigation: React.FC<NavigationProps> = ({ activeView, onViewChange, canEd
       { id: 'search', label: '案件検索', icon: Search },
     ];
 
-    // エンジニアの場合は専用の案件一覧とお気に入りを表示
+    // エンジニアの場合はお気に入りを表示
     if (userRole === 'engineer') {
-      baseItems.push(
-        { id: 'engineer-cases', label: '案件一覧（エンジニア向け）', icon: Building },
-        { id: 'favorites', label: 'お気に入り', icon: Heart }
-      );
+      baseItems.push({ id: 'favorites', label: 'お気に入り', icon: Heart });
+    }
+
+    // 営業と管理者の場合はエンジニア参画情報を表示
+    if (userRole === 'sales' || userRole === 'admin') {
+      baseItems.push({ id: 'engineer-participation', label: 'エンジニア参画情報', icon: Users });
     }
 
     baseItems.push({ id: 'history', label: '閲覧履歴', icon: Clock });
