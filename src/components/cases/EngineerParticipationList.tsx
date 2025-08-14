@@ -75,8 +75,6 @@ const EngineerParticipationList: React.FC<EngineerParticipationListProps> = ({
     totalEngineers: allUsers.filter(u => u.role === 'engineer').length,
     participatingEngineers: participatingEngineers.length,
     waitingEngineers: waitingEngineers.length,
-    totalApplications: allApplications.length,
-    acceptedApplications: allApplications.filter(app => app.status === 'accepted').length,
   };
 
   return (
@@ -116,22 +114,6 @@ const EngineerParticipationList: React.FC<EngineerParticipationListProps> = ({
               <span className="text-white text-sm font-medium">待機中</span>
             </div>
             <p className="text-2xl font-bold text-white">{totalStats.waitingEngineers}</p>
-          </div>
-          
-          <div className="bg-white bg-opacity-20 rounded-2xl p-4 backdrop-blur-sm">
-            <div className="flex items-center space-x-2 mb-2">
-              <Target className="w-5 h-5 text-white" />
-              <span className="text-white text-sm font-medium">総応募数</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{totalStats.totalApplications}</p>
-          </div>
-          
-          <div className="bg-white bg-opacity-20 rounded-2xl p-4 backdrop-blur-sm">
-            <div className="flex items-center space-x-2 mb-2">
-              <Award className="w-5 h-5 text-white" />
-              <span className="text-white text-sm font-medium">採用決定</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{totalStats.acceptedApplications}</p>
           </div>
         </div>
       </div>
