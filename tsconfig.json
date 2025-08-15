@@ -1,4 +1,5 @@
 {
+  "_comment": "SES案件管理システム - TypeScript設定ファイル（ルート） | プロジェクト参照設定 | アプリケーション用とNode.js用の設定を分離管理",
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

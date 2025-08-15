@@ -1,4 +1,5 @@
 {
+  "_comment": "SES案件管理システム - TypeScript設定ファイル（アプリケーション用） | React + TypeScript開発環境設定 | 厳密な型チェック、JSX変換、ES2020対応",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,

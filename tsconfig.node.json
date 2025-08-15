@@ -1,4 +1,5 @@
 {
+  "_comment": "SES案件管理システム - TypeScript設定ファイル（Node.js用） | Vite設定ファイル用のTypeScript設定 | ES2022対応、モジュール解決設定",
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2023"],

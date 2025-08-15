@@ -1,3 +1,17 @@
+/**
+ * SES案件管理システム - メインCSSファイル
+ * 
+ * 機能:
+ * - Tailwind CSSの基本レイヤー読み込み
+ * - グローバルスタイルの定義
+ * - カスタムコンポーネントスタイル
+ * - ユーティリティクラスの拡張
+ * 
+ * Tailwind レイヤー:
+ * - @tailwind base: ブラウザのデフォルトスタイルリセット
+ * - @tailwind components: 再利用可能なコンポーネントスタイル
+ * - @tailwind utilities: ユーティリティクラス（margin, padding等）
+ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
