@@ -1,3 +1,25 @@
+/**
+ * SES案件管理システム - 案件登録・編集フォームコンポーネント
+ * 
+ * 機能:
+ * - 案件情報の入力・編集
+ * - メール解析による自動入力（LLM・ルールベース）
+ * - Excel一括登録機能
+ * - スキル選択（プリセット + 手動入力）
+ * - 参考資料の添付
+ * - バリデーション機能
+ * 
+ * 特徴:
+ * - 左右分割レイアウト（フォーム + メール解析）
+ * - リアルタイムバリデーション
+ * - 段階的な情報入力支援
+ * - コピー機能対応
+ * 
+ * メール解析:
+ * - LLM解析: 高精度、時間要
+ * - ルールベース解析: 高速、標準精度
+ * - 解析結果の自動フォーム入力
+ */
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2, Mail, Wand2, AlertCircle, CheckCircle, Upload, Brain, Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import { Case, ReferenceMaterial } from '../../types';

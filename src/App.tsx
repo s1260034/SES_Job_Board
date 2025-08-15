@@ -1,3 +1,19 @@
+/**
+ * SES案件管理システム - メインアプリケーションコンポーネント
+ * 
+ * 機能:
+ * - ユーザー認証とロールベースアクセス制御
+ * - 案件管理（CRUD操作、検索、フィルタリング）
+ * - エンジニア参画状況管理
+ * - 応募・マッチング機能
+ * - ダッシュボード表示（ロール別）
+ * - お気に入り・閲覧履歴管理
+ * 
+ * 対応ユーザーロール:
+ * - admin: 全機能アクセス可能
+ * - sales: 案件管理、応募管理
+ * - engineer: 案件閲覧、応募、お気に入り
+ */
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
 import { useCases } from './hooks/useCases';

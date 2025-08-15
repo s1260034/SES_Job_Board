@@ -1,3 +1,25 @@
+/**
+ * SES案件管理システム - 応募モーダルコンポーネント
+ * 
+ * 機能:
+ * - エンジニアから営業担当者への連絡機能
+ * - 応募メッセージの入力
+ * - 参考資料URL（ポートフォリオ等）の添付
+ * - 既存応募の状況表示
+ * - 案件情報の確認表示
+ * 
+ * 応募ステータス表示:
+ * - pending: 応募済み（営業対応待ち）
+ * - reviewing: 書類選考中
+ * - interview_scheduled: 面談予定
+ * - accepted: 採用決定
+ * - rejected: 不採用
+ * 
+ * UI特徴:
+ * - 案件情報の要約表示
+ * - 応募状況の視覚的表示
+ * - フィードバック情報の表示
+ */
 import React, { useState } from 'react';
 import { X, Send, FileText, User, Clock, CheckCircle } from 'lucide-react';
 import { Case, Application } from '../../types';

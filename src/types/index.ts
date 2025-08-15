@@ -1,3 +1,15 @@
+/**
+ * SES案件管理システム - TypeScript型定義
+ * 
+ * 定義している型:
+ * - User: ユーザー情報（管理者、営業、エンジニア）
+ * - Case: 案件情報（企業名、スキル、単価、ステータス等）
+ * - Application: 応募情報（エンジニアから営業への連絡）
+ * - ReferenceMaterial: 参考資料（ドキュメント、画像、リンク）
+ * - CaseFilters: 案件検索・フィルタリング条件
+ * - DashboardStats: ダッシュボード統計情報
+ * - ViewHistoryItem: 閲覧履歴項目
+ */
 export interface User {
   id: string;
   name: string;

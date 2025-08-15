@@ -1,3 +1,24 @@
+/**
+ * SES案件管理システム - 参考資料管理コンポーネント
+ * 
+ * 機能:
+ * - 参考資料の一覧表示
+ * - 新規資料の追加（名前、URL、種類）
+ * - 資料の削除
+ * - 外部リンクでの資料表示
+ * 
+ * 資料種類:
+ * - document: ドキュメント（PDF、Word等）
+ * - image: 画像ファイル
+ * - link: Webページリンク
+ * - other: その他
+ * 
+ * UI特徴:
+ * - 資料種類別のアイコン表示
+ * - 追加フォームの展開・折りたたみ
+ * - 資料へのダイレクトアクセス
+ * - 権限に応じた編集制御
+ */
 import React, { useState } from 'react';
 import { Plus, X, FileText, Image, Link, Download, Upload } from 'lucide-react';
 import { ReferenceMaterial } from '../../types';

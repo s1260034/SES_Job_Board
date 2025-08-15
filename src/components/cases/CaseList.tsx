@@ -1,3 +1,22 @@
+/**
+ * SES案件管理システム - 案件一覧コンポーネント
+ * 
+ * 機能:
+ * - 案件一覧の表示（カード形式・リスト形式切り替え）
+ * - ソート機能（新しい順、単価順、名前順等）
+ * - ステータスフィルタリング
+ * - 案件操作（閲覧、編集、削除、コピー、お気に入り、応募）
+ * - 新規案件登録ボタン（権限に応じて表示）
+ * 
+ * 表示形式:
+ * - カード形式: 視覚的で情報が見やすい
+ * - リスト形式: 多くの案件を一覧で確認
+ * 
+ * 権限制御:
+ * - 編集・削除: 営業・管理者のみ
+ * - 応募: エンジニアのみ
+ * - お気に入り: エンジニアのみ
+ */
 import React, { useState } from 'react';
 import { ArrowUpDown, Plus, Calendar, DollarSign, Eye, Grid3X3, List, MapPin, Users, Edit, Trash2, Copy, Heart, Send } from 'lucide-react';
 import { Case } from '../../types';

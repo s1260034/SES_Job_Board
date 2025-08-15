@@ -1,3 +1,19 @@
+/**
+ * SES案件管理システム - 案件管理カスタムフック
+ * 
+ * 機能:
+ * - 案件データの取得・管理（モックデータベース）
+ * - 案件CRUD操作（作成、更新、削除）
+ * - 案件一括登録（Excel/CSVインポート対応）
+ * - 案件コピー機能（既存案件の複製）
+ * - 案件検索・フィルタリング（スキル、単価、勤務地等）
+ * - 案件画像のランダム割り当て
+ * 
+ * データソース:
+ * - mockData.ts からの初期データ読み込み
+ * - ローカル状態での案件管理
+ * - 将来的にSupabaseへの移行予定
+ */
 import { useState, useEffect } from 'react';
 import { Case, CaseFilters } from '../types';
 import { mockCases, getRandomCaseImage } from '../data/mockData';

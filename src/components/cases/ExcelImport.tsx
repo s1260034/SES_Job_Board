@@ -1,3 +1,28 @@
+/**
+ * SES案件管理システム - Excel一括登録コンポーネント
+ * 
+ * 機能:
+ * - Excelテンプレートのダウンロード
+ * - Excel/CSVファイルのドラッグ&ドロップアップロード
+ * - データバリデーション（必須項目、形式チェック）
+ * - 一括登録処理
+ * - エラー詳細の表示
+ * 
+ * 対応形式:
+ * - Excel (.xlsx, .xls)
+ * - CSV (.csv)
+ * 
+ * バリデーション項目:
+ * - 必須フィールドの存在確認
+ * - 数値データの形式チェック
+ * - 単価範囲の妥当性確認
+ * - ステータス値の検証
+ * 
+ * UI特徴:
+ * - ドラッグ&ドロップインターフェース
+ * - 処理結果の詳細表示（成功・エラー件数）
+ * - エラー行の特定と修正指示
+ */
 import React, { useState, useRef } from 'react';
 import { Upload, Download, FileSpreadsheet, AlertCircle, CheckCircle, X } from 'lucide-react';
 import * as XLSX from 'xlsx';

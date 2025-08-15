@@ -1,3 +1,17 @@
+/**
+ * SES案件管理システム - ヘッダーコンポーネント
+ * 
+ * 機能:
+ * - システムタイトル表示
+ * - ログインユーザー情報表示（名前、ロール）
+ * - ログアウト機能
+ * - 固定ヘッダー（スクロール時も表示維持）
+ * 
+ * 表示情報:
+ * - ユーザー名とアバター
+ * - ロール表示（管理者、営業、エンジニア）
+ * - ログアウトボタン
+ */
 import React from 'react';
 import { LogOut, User, Settings } from 'lucide-react';
 import { User as UserType } from '../../types';

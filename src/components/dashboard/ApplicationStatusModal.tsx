@@ -1,3 +1,33 @@
+/**
+ * SES案件管理システム - 応募ステータス管理モーダルコンポーネント
+ * 
+ * 機能:
+ * - エンジニア応募のステータス更新
+ * - 面談日時の設定
+ * - フィードバックの記録
+ * - 営業メモの管理
+ * - 案件・応募者情報の表示
+ * 
+ * ステータス管理:
+ * - pending: 新規連絡
+ * - reviewing: 書類選考中
+ * - interview_scheduled: 面談予定
+ * - interview_completed: 面談完了
+ * - accepted: 採用決定
+ * - rejected: 不採用
+ * - withdrawn: 辞退
+ * 
+ * 入力項目:
+ * - ステータス選択（必須）
+ * - 面談日時（面談関連ステータス時）
+ * - フィードバック（面談完了後）
+ * - 営業メモ（任意）
+ * 
+ * UI特徴:
+ * - ステータス別アイコン・カラー表示
+ * - 条件付きフィールド表示
+ * - 案件・応募者情報の要約表示
+ */
 import React, { useState } from 'react';
 import { X, Calendar, FileText, MessageSquare, CheckCircle, Clock, Users, Award, XCircle } from 'lucide-react';
 import { Application, Case, User } from '../../types';

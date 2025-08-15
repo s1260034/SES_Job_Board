@@ -1,3 +1,23 @@
+/**
+ * SES案件管理システム - ログインフォームコンポーネント
+ * 
+ * 機能:
+ * - メールアドレス・パスワードによる認証
+ * - ログインエラーハンドリング
+ * - デモアカウント情報の表示
+ * - レスポンシブデザイン対応
+ * 
+ * デモアカウント:
+ * - 営業: tanaka@ses-company.com
+ * - エンジニア: sato@ses-company.com  
+ * - 管理者: suzuki@ses-company.com
+ * - パスワード: password（全共通）
+ * 
+ * UI特徴:
+ * - グラデーション背景
+ * - アイコン付き入力フィールド
+ * - ローディング状態表示
+ */
 import React, { useState } from 'react';
 import { LogIn, User, Lock } from 'lucide-react';
 

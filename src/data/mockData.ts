@@ -1,3 +1,20 @@
+/**
+ * SES案件管理システム - モックデータ定義
+ * 
+ * 提供データ:
+ * - mockUsers: デモユーザー（管理者、営業、エンジニア）
+ * - mockCases: サンプル案件データ（様々なステータス・技術スタック）
+ * - mockApplications: 応募データ（エンジニアから営業への連絡）
+ * - skillOptions: 技術スキル選択肢
+ * - locationOptions: 勤務地選択肢
+ * - caseImageUrls: 案件用画像URL配列
+ * 
+ * 特徴:
+ * - 実際のSES案件を模したリアルなデータ
+ * - 多様な技術スタック（React、Vue、Angular、Java、Python等）
+ * - 様々な案件ステータス（募集中、提案中、成約済、終了）
+ * - デモ用ログイン情報付き
+ */
 import { Case, User, Application } from '../types';
 
 export let mockApplications: Application[] = [
