@@ -29,7 +29,7 @@
 - **ルーティング**: React Router (将来実装予定)
 - **UI コンポーネント**: Lucide React (アイコン)
 - **バックエンド**: Node.js, Express.js (将来実装)
-- **データベース**: PostgreSQL (Supabase)
+- **データベース**: SQL（未定）
 - **認証**: Supabase Auth
 - **ファイル処理**: xlsx, papaparse
 - **デプロイ**: Netlify
