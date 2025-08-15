@@ -1,5 +1,4 @@
 {
-{
   "_comment": "SES案件管理システム - パッケージ設定ファイル | 依存関係管理、ビルドスクリプト、プロジェクトメタデータを定義 | React 18 + TypeScript + Tailwind CSS + Vite構成",
   "name": "vite-react-typescript-starter",
   "private": true,
